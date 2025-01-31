@@ -10,6 +10,7 @@ import time
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 import logging
+from tensorflow.keras.applications.vgg16 import preprocess_input
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO)
@@ -23,6 +24,9 @@ app.add_middleware(
     allow_methods=["*"],  # 모든 메서드 허용
     allow_headers=["*"],  # 모든 헤더 허용
 )
+
+class ModelOption(Enum):
+    base = "base"
 
 class PredictionRequest(BaseModel):
     image: str  # base64 encoded image
@@ -39,7 +43,10 @@ FLOWER_SPECIES = {0: 'dandelion', 1: 'daisy', 2: 'tulips', 3: 'sunflowers', 4: '
 MODEL_DIR = os.path.join(os.path.dirname(os.getcwd()), 'models')
 
 models = {
-    ModelOption.base: tf.keras.models.load_model(os.path.join(MODEL_DIR, 'base.h5')),
+    ModelOption.base: tf.keras.models.load_model(
+        os.path.join(MODEL_DIR, 'flower_classification_model.h5'),
+        custom_objects={'preprocess_input': preprocess_input}
+    ),
 }
 
 async def preprocess_image(image_file: UploadFile, target_size: tuple = (224, 224)) -> np.ndarray:
@@ -97,4 +104,4 @@ async def predict(image: UploadFile = File(...), option: ModelOption = Form(Mode
     )
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, port=8000)
