@@ -33,14 +33,7 @@ class PredictionResponse(BaseModel):
     inference_time: float
 
 # 꽃 종류 매핑
-FLOWER_SPECIES = {
-    0: "barrel_jellyfish_resized",
-    1: "blue_jellyfish_resized",
-    2: "compass_jellyfish_resized",
-    3: "lions_mane_resized",
-    4: "mauve_stinger_jellyfish_resized",
-    5: "moon_jellyfish_resized"
-}
+FLOWER_SPECIES = {0: 'dandelion', 1: 'daisy', 2: 'tulips', 3: 'sunflowers', 4: 'roses'}
 
 # Load models
 MODEL_DIR = os.path.join(os.path.dirname(os.getcwd()), 'models')
